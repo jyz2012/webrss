@@ -1,0 +1,356 @@
+:root {
+    --primary-color: #2c3e50;
+    --bg-color: #f8f9fa;
+    --text-color: #333333;
+    --meta-color: #666666;
+    --border-color: #e9ecef;
+    --header-bg: #ffffff;
+    --hover-color: #d71a1b;
+    --summary-color: #6c757d;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-color: #e4e4e4;
+        --bg-color: #1a1b1e;
+        --text-color: #e4e4e4;
+        --meta-color: #888888;
+        --border-color: #2d2d2d;
+        --header-bg: #252629;
+        --hover-color: #ff6b6b;
+        --summary-color: #9ca3af;
+    }
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.header {
+    background-color: var(--header-bg);
+    padding: 15px 30px;
+    border-bottom: 1px solid var(--border-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.site-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.site-title i {
+    color: var(--hover-color);
+}
+
+.site-title span {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.update-time {
+    color: var(--meta-color);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background-color: var(--bg-color);
+    border-radius: 6px;
+}
+
+.update-time i {
+    color: var(--hover-color);
+}
+
+.articles {
+    max-width: 900px;
+    margin: 85px auto 20px;
+    padding: 0 20px;
+}
+
+.article {
+    background-color: var(--header-bg);
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.article:hover {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.article-title {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.2rem;
+    line-height: 1.4;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.article-title:hover {
+    color: var(--hover-color);
+}
+
+.article-summary {
+    color: var(--summary-color);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 8px 0;
+    padding: 8px 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.article-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--meta-color);
+    font-size: 0.9rem;
+}
+
+.meta-item i {
+    color: var(--meta-color);
+}
+
+.comment-button,
+.favorite-button {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: var(--bg-color);
+}
+
+.comment-button:hover,
+.favorite-button:hover {
+    color: var(--hover-color);
+    background-color: var(--border-color);
+}
+
+.button-group {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.comment-button,
+.favorite-button {
+    margin-left: 0;
+}
+
+.favorited {
+    color: var(--hover-color);
+}
+
+.favorited i::before {
+    content: "\F0B7F";  /* 实心书签图标 */
+}
+
+.source-link {
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.source-link:hover {
+    color: var(--hover-color);
+    background-color: var(--border-color);
+}
+
+.article-link {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 12px 20px;
+    }
+
+    .site-title span {
+        font-size: 1.1rem;
+    }
+
+    .update-time {
+        font-size: 0.8rem;
+        padding: 4px 8px;
+    }
+
+    .articles {
+        padding: 0 15px;
+    }
+
+    .article {
+        padding: 14px;
+        margin-bottom: 10px;
+    }
+
+    .article-title {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 10px 15px;
+    }
+
+    .site-title i {
+        font-size: 20px;
+    }
+
+    .update-time {
+        padding: 3px 6px;
+    }
+
+    .articles {
+        padding: 0 10px;
+    }
+
+    .article {
+        padding: 12px;
+        margin-bottom: 8px;
+    }
+
+    .article-meta {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .button-group {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .comment-button,
+    .favorite-button {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .meta-item {
+        padding: 4px 0;
+    }
+
+    .article-link {
+        font-size: 0.85rem;
+    }
+
+    .mdi {
+        font-size: 16px !important;
+    }
+    
+    .site-title .mdi {
+        font-size: 20px !important;
+    }
+    
+    .section-title .mdi {
+        font-size: 18px !important;
+    }
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 24px 0 12px;
+    padding-bottom: 0;
+}
+
+.section-title i {
+    color: var(--hover-color);
+}
+
+.section-title small {
+    color: var(--meta-color);
+    font-size: 0.9rem;
+    font-weight: normal;
+    margin-left: 8px;
+}
+
+.history-title {
+    margin-top: 32px;
+}
+
+.article-section {
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 1.1rem;
+        margin: 20px 0 10px;
+    }
+
+    .history-title {
+        margin-top: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-title {
+        font-size: 1rem;
+        margin: 16px 0 8px;
+    }
+
+    .history-title {
+        margin-top: 24px;
+    }
+}
+
+/* 统一图标样式 */
+.mdi {
+    font-size: 18px !important;
+    opacity: 0.9;
+}
+
+/* 调整特定图标大小 */
+.site-title .mdi {
+    font-size: 24px !important;
+    opacity: 1;
+}
+
+.section-title .mdi {
+    font-size: 22px !important;
+    opacity: 1;
+} 

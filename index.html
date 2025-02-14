@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSS Reader</title>
+    <link rel="icon" href="static/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="site-title">
+            <i class="mdi mdi-rss-box"></i>
+            <span>RSS Reader</span>
+        </div>
+        <div class="update-time">
+            <i class="mdi mdi-clock-outline"></i>
+            <span id="update-time"></span>
+        </div>
+    </header>
+    <main class="articles" id="articles"></main>
+    <script>
+        const GITHUB_REPO = 'imjiaoyuan/RSS';
+
+        function escapeString(str) {
+            return str
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '\\"')
+                .replace(/\n/g, '\\n')
+                .replace(/\r/g, '\\r')
+                .replace(/\t/g, '\\t');
+        }
+
+        function createGitHubIssue(title, summary, date, link, type = 'comment') {
+            const issueTitle = `${title} (${date})`;
+            const cleanSummary = summary.split(/[。！？.!?]/)[0].replace(/\s+/g, ' ').trim();
+            const issueBody = `${cleanSummary}。\n\n链接：${link}`;
+            const label = type === 'comment' ? 'comment' : 'favorite';
+            const issueUrl = `https://github.com/${GITHUB_REPO}/issues/new?title=${encodeURIComponent(issueTitle)}&body=${encodeURIComponent(issueBody)}&labels=${label}`;
+            
+            window.open(issueUrl, '_blank');
+        }
+
+        function isToday(dateStr) {
+            const today = new Date();
+            const articleDate = new Date(dateStr);
+            return today.toDateString() === articleDate.toDateString();
+        }
+
+        function renderArticle(article) {
+            const safeTitle = escapeString(article.title);
+            const safeSummary = escapeString(article.summary || '无摘要');
+            
+            return `
+                <article class="article">
+                    <a href="${article.link}" class="article-title" target="_blank">${article.title}</a>
+                    <div class="article-summary">
+                        ${article.summary || '无摘要'}
+                    </div>
+                    <div class="article-meta">
+                        <a href="${article.source_url}" class="meta-item source-link" target="_blank">
+                            <i class="mdi mdi-rss"></i>
+                            <span>${article.author}</span>
+                        </a>
+                        <div class="meta-item">
+                            <i class="mdi mdi-calendar-clock"></i>
+                            <span>${article.date}</span>
+                        </div>
+                        <div class="button-group">
+                            <div class="meta-item favorite-button" onclick="createGitHubIssue('${safeTitle}', '${safeSummary}', '${article.date}', '${article.link}', 'favorite')">
+                                <i class="mdi mdi-bookmark-outline"></i>
+                                <span>收藏</span>
+                            </div>
+                            <div class="meta-item comment-button" onclick="createGitHubIssue('${safeTitle}', '${safeSummary}', '${article.date}', '${article.link}', 'comment')">
+                                <i class="mdi mdi-message-outline"></i>
+                                <span>评论</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>`;
+        }
+
+        async function loadArticles() {
+            try {
+                const response = await fetch('feed.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                document.getElementById('update-time').textContent = `更新时间：${data.update_time}`;
+                const articlesContainer = document.getElementById('articles');
+                
+                if (!data.articles || !Array.isArray(data.articles)) {
+                    throw new Error('Invalid data format');
+                }
+
+                const todayArticles = data.articles.filter(article => isToday(article.date));
+                const olderArticles = data.articles.filter(article => !isToday(article.date));
+
+                let html = '';
+
+                if (todayArticles.length > 0) {
+                    html += `
+                        <div class="section-title">
+                            <i class="mdi mdi-star"></i>
+                            <span>今日更新</span>
+                            <small>(${todayArticles.length}篇)</small>
+                        </div>
+                        <div class="article-section">
+                            ${todayArticles.map(renderArticle).join('')}
+                        </div>`;
+                }
+
+                html += `
+                    <div class="section-title ${todayArticles.length > 0 ? 'history-title' : ''}">
+                        <i class="mdi mdi-history"></i>
+                        <span>历史文章</span>
+                        <small>(${olderArticles.length}篇)</small>
+                    </div>
+                    <div class="article-section">
+                        ${olderArticles.map(renderArticle).join('')}
+                    </div>`;
+
+                articlesContainer.innerHTML = html;
+            } catch (error) {
+                document.getElementById('articles').innerHTML = `
+                    <div class="error-message">
+                        加载文章失败：${error.message}<br>
+                        请检查 feed.json 文件是否存在并且格式正确
+                    </div>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadArticles);
+    </script>
+    <style>
+        .error-message {
+            color: #dc3545;
+            padding: 20px;
+            text-align: center;
+            background: var(--header-bg);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</body>
+</html>
